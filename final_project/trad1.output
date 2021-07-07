@@ -1,0 +1,3268 @@
+Grammar
+
+    0 $accept: axioma $end
+
+    1 axioma: def_variables def_funciones
+
+    2 def_variables: %empty
+    3              | v_global ';' r_variables
+
+    4 r_variables: def_variables
+
+    5 def_funciones: funciones iniciar
+
+    6 funciones: %empty
+
+    7 $@1: %empty
+
+    8 funciones: IDENTIF '(' parametros ')' '{' $@1 cuerpo_funcion '}' funciones
+
+    9 cuerpo_funcion: r_sentencia cuerpo_funcion
+   10               | RETURN expresion ';' cuerpo_funcion
+   11               | %empty
+
+   12 parametros: INTEGER IDENTIF r_parametros
+   13           | %empty
+
+   14 r_parametros: ',' parametros
+   15             | %empty
+
+   16 iniciar: MAIN '(' ')' '{' r_sentencias '}'
+
+   17 sentencia: asignacion
+   18          | impresion
+   19          | v_global
+   20          | imprimir_cadena
+
+   21 r_sentencias: %empty
+   22             | sentencia ';' r_sentencias
+   23             | WHILE '(' expresion_cond ')' '{' r_sentencias '}' r_sentencias
+   24             | IF '(' expresion ')' '{' r_sentencia r_sentencias '}' r_if
+   25             | FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}' r_sentencias
+
+   26 r_sentencia: sentencia ';'
+   27            | WHILE '(' expresion_cond ')' '{' r_sentencias '}'
+   28            | IF '(' expresion ')' '{' r_sentencia r_sentencias '}' r_else
+   29            | FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}'
+
+   30 r_if: r_sentencias
+   31     | ELSE '{' r_sentencia r_sentencias '}' r_sentencias
+
+   32 r_else: %empty
+   33       | ELSE '{' r_sentencia r_sentencias '}'
+
+   34 imprimir_cadena: PUTS '(' STRING ')'
+
+   35 v_global: INTEGER IDENTIF v_asignacion v_multiple
+
+   36 v_asignacion: %empty
+   37             | '=' NUMERO
+   38             | '[' expresion_aritm ']'
+
+   39 v_multiple: %empty
+   40           | ',' IDENTIF v_asignacion v_multiple
+
+   41 impresion: PRINTF '(' argumento
+
+   42 argumento: expresion r_impresion
+   43          | STRING r_impresion
+   44          | IDENTIF '[' expresion_aritm ']' r_impresion
+
+   45 r_impresion: ',' argumento
+   46            | ')'
+
+   47 asignacion: IDENTIF '=' expresion
+   48           | IDENTIF '[' expresion_aritm ']' '=' expresion
+
+   49 expresion: termino
+   50          | expresion '+' expresion
+   51          | expresion '-' expresion
+   52          | expresion '*' expresion
+   53          | expresion '/' expresion
+   54          | expresion '<' expresion
+   55          | expresion '>' expresion
+   56          | expresion LESS_EQUAL expresion
+   57          | expresion GREATER_EQUAL expresion
+   58          | expresion COMPARISON expresion
+   59          | expresion DIFFERENCE expresion
+   60          | expresion AND expresion
+   61          | expresion OR expresion
+
+   62 expresion_aritm: termino
+   63                | expresion '+' expresion
+   64                | expresion '-' expresion
+   65                | expresion '*' expresion
+   66                | expresion '/' expresion
+
+   67 expresion_cond: expresion '<' expresion
+   68               | expresion '>' expresion
+   69               | expresion LESS_EQUAL expresion
+   70               | expresion GREATER_EQUAL expresion
+   71               | expresion COMPARISON expresion
+   72               | expresion DIFFERENCE expresion
+   73               | expresion AND expresion
+   74               | expresion OR expresion
+
+   75 termino: operando
+   76        | '+' operando
+   77        | '-' operando
+
+   78 operando: IDENTIF
+   79         | NUMERO
+   80         | '(' expresion ')'
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '(' (40) 8 16 23 24 25 27 28 29 34 41 80
+    ')' (41) 8 16 23 24 25 27 28 29 34 46 80
+    '*' (42) 52 65
+    '+' (43) 50 63 76
+    ',' (44) 14 40 45
+    '-' (45) 51 64 77
+    '/' (47) 53 66
+    ';' (59) 3 10 22 25 26 29
+    '<' (60) 54 67
+    '=' (61) 25 29 37 47 48
+    '>' (62) 55 68
+    '[' (91) 38 44 48
+    ']' (93) 38 44 48
+    '{' (123) 8 16 23 24 25 27 28 29 31 33
+    '}' (125) 8 16 23 24 25 27 28 29 31 33
+    error (256)
+    NUMERO <valor> (258) 37 79
+    IDENTIF <cadena> (259) 8 12 25 29 35 40 44 47 48 78
+    INTEGER <cadena> (260) 12 35
+    STRING <cadena> (261) 34 43
+    MAIN <cadena> (262) 16
+    PUTS <cadena> (263) 34
+    PRINTF <cadena> (264) 41
+    WHILE <cadena> (265) 23 27
+    IF <cadena> (266) 24 28
+    ELSE <cadena> (267) 31 33
+    FOR <cadena> (268) 25 29
+    RETURN <cadena> (269) 10
+    OR <cadena> (270) 61 74
+    AND <cadena> (271) 60 73
+    COMPARISON <cadena> (272) 58 71
+    DIFFERENCE <cadena> (273) 59 72
+    LESS_EQUAL <cadena> (274) 56 69
+    GREATER_EQUAL <cadena> (275) 57 70
+    SIGNO_UNARIO (276)
+
+
+Nonterminals, with rules where they appear
+
+    $accept (37)
+        on left: 0
+    axioma <cadena> (38)
+        on left: 1
+        on right: 0
+    def_variables <cadena> (39)
+        on left: 2 3
+        on right: 1 4
+    r_variables <cadena> (40)
+        on left: 4
+        on right: 3
+    def_funciones <cadena> (41)
+        on left: 5
+        on right: 1
+    funciones <cadena> (42)
+        on left: 6 8
+        on right: 5 8
+    $@1 (43)
+        on left: 7
+        on right: 8
+    cuerpo_funcion <cadena> (44)
+        on left: 9 10 11
+        on right: 8 9 10
+    parametros <cadena> (45)
+        on left: 12 13
+        on right: 8 14
+    r_parametros <cadena> (46)
+        on left: 14 15
+        on right: 12
+    iniciar <cadena> (47)
+        on left: 16
+        on right: 5
+    sentencia <cadena> (48)
+        on left: 17 18 19 20
+        on right: 22 26
+    r_sentencias <cadena> (49)
+        on left: 21 22 23 24 25
+        on right: 16 22 23 24 25 27 28 29 30 31 33
+    r_sentencia <cadena> (50)
+        on left: 26 27 28 29
+        on right: 9 24 28 31 33
+    r_if <cadena> (51)
+        on left: 30 31
+        on right: 24
+    r_else <cadena> (52)
+        on left: 32 33
+        on right: 28
+    imprimir_cadena <cadena> (53)
+        on left: 34
+        on right: 20
+    v_global <cadena> (54)
+        on left: 35
+        on right: 3 19
+    v_asignacion <cadena> (55)
+        on left: 36 37 38
+        on right: 35 40
+    v_multiple <cadena> (56)
+        on left: 39 40
+        on right: 35 40
+    impresion <cadena> (57)
+        on left: 41
+        on right: 18
+    argumento <cadena> (58)
+        on left: 42 43 44
+        on right: 41 45
+    r_impresion <cadena> (59)
+        on left: 45 46
+        on right: 42 43 44
+    asignacion <cadena> (60)
+        on left: 47 48
+        on right: 17
+    expresion <cadena> (61)
+        on left: 49 50 51 52 53 54 55 56 57 58 59 60 61
+        on right: 10 24 28 42 47 48 50 51 52 53 54 55 56 57 58 59 60 61 63 64 65 66 67 68 69 70 71 72 73 74 80
+    expresion_aritm <cadena> (62)
+        on left: 62 63 64 65 66
+        on right: 25 29 38 44 48
+    expresion_cond <cadena> (63)
+        on left: 67 68 69 70 71 72 73 74
+        on right: 23 25 27 29
+    termino <cadena> (64)
+        on left: 75 76 77
+        on right: 49 62
+    operando <cadena> (65)
+        on left: 78 79 80
+        on right: 75 76 77
+
+
+State 0
+
+    0 $accept: . axioma $end
+
+    INTEGER  shift, and go to state 1
+
+    $default  reduce using rule 2 (def_variables)
+
+    axioma         go to state 2
+    def_variables  go to state 3
+    v_global       go to state 4
+
+
+State 1
+
+   35 v_global: INTEGER . IDENTIF v_asignacion v_multiple
+
+    IDENTIF  shift, and go to state 5
+
+
+State 2
+
+    0 $accept: axioma . $end
+
+    $end  shift, and go to state 6
+
+
+State 3
+
+    1 axioma: def_variables . def_funciones
+
+    IDENTIF  shift, and go to state 7
+
+    $default  reduce using rule 6 (funciones)
+
+    def_funciones  go to state 8
+    funciones      go to state 9
+
+
+State 4
+
+    3 def_variables: v_global . ';' r_variables
+
+    ';'  shift, and go to state 10
+
+
+State 5
+
+   35 v_global: INTEGER IDENTIF . v_asignacion v_multiple
+
+    '='  shift, and go to state 11
+    '['  shift, and go to state 12
+
+    $default  reduce using rule 36 (v_asignacion)
+
+    v_asignacion  go to state 13
+
+
+State 6
+
+    0 $accept: axioma $end .
+
+    $default  accept
+
+
+State 7
+
+    8 funciones: IDENTIF . '(' parametros ')' '{' $@1 cuerpo_funcion '}' funciones
+
+    '('  shift, and go to state 14
+
+
+State 8
+
+    1 axioma: def_variables def_funciones .
+
+    $default  reduce using rule 1 (axioma)
+
+
+State 9
+
+    5 def_funciones: funciones . iniciar
+
+    MAIN  shift, and go to state 15
+
+    iniciar  go to state 16
+
+
+State 10
+
+    3 def_variables: v_global ';' . r_variables
+
+    INTEGER  shift, and go to state 1
+
+    $default  reduce using rule 2 (def_variables)
+
+    def_variables  go to state 17
+    r_variables    go to state 18
+    v_global       go to state 4
+
+
+State 11
+
+   37 v_asignacion: '=' . NUMERO
+
+    NUMERO  shift, and go to state 19
+
+
+State 12
+
+   38 v_asignacion: '[' . expresion_aritm ']'
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion        go to state 25
+    expresion_aritm  go to state 26
+    termino          go to state 27
+    operando         go to state 28
+
+
+State 13
+
+   35 v_global: INTEGER IDENTIF v_asignacion . v_multiple
+
+    ','  shift, and go to state 29
+
+    $default  reduce using rule 39 (v_multiple)
+
+    v_multiple  go to state 30
+
+
+State 14
+
+    8 funciones: IDENTIF '(' . parametros ')' '{' $@1 cuerpo_funcion '}' funciones
+
+    INTEGER  shift, and go to state 31
+
+    $default  reduce using rule 13 (parametros)
+
+    parametros  go to state 32
+
+
+State 15
+
+   16 iniciar: MAIN . '(' ')' '{' r_sentencias '}'
+
+    '('  shift, and go to state 33
+
+
+State 16
+
+    5 def_funciones: funciones iniciar .
+
+    $default  reduce using rule 5 (def_funciones)
+
+
+State 17
+
+    4 r_variables: def_variables .
+
+    $default  reduce using rule 4 (r_variables)
+
+
+State 18
+
+    3 def_variables: v_global ';' r_variables .
+
+    $default  reduce using rule 3 (def_variables)
+
+
+State 19
+
+   37 v_asignacion: '=' NUMERO .
+
+    $default  reduce using rule 37 (v_asignacion)
+
+
+State 20
+
+   79 operando: NUMERO .
+
+    $default  reduce using rule 79 (operando)
+
+
+State 21
+
+   78 operando: IDENTIF .
+
+    $default  reduce using rule 78 (operando)
+
+
+State 22
+
+   76 termino: '+' . operando
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '('      shift, and go to state 24
+
+    operando  go to state 34
+
+
+State 23
+
+   77 termino: '-' . operando
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '('      shift, and go to state 24
+
+    operando  go to state 35
+
+
+State 24
+
+   80 operando: '(' . expresion ')'
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 36
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 25
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   63 expresion_aritm: expresion . '+' expresion
+   64                | expresion . '-' expresion
+   65                | expresion . '*' expresion
+   66                | expresion . '/' expresion
+
+    OR             shift, and go to state 38
+    AND            shift, and go to state 39
+    COMPARISON     shift, and go to state 40
+    DIFFERENCE     shift, and go to state 41
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 46
+    '-'            shift, and go to state 47
+    '*'            shift, and go to state 48
+    '/'            shift, and go to state 49
+
+
+State 26
+
+   38 v_asignacion: '[' expresion_aritm . ']'
+
+    ']'  shift, and go to state 50
+
+
+State 27
+
+   49 expresion: termino .
+   62 expresion_aritm: termino .
+
+    ';'       reduce using rule 62 (expresion_aritm)
+    ')'       reduce using rule 62 (expresion_aritm)
+    ']'       reduce using rule 62 (expresion_aritm)
+    $default  reduce using rule 49 (expresion)
+
+
+State 28
+
+   75 termino: operando .
+
+    $default  reduce using rule 75 (termino)
+
+
+State 29
+
+   40 v_multiple: ',' . IDENTIF v_asignacion v_multiple
+
+    IDENTIF  shift, and go to state 51
+
+
+State 30
+
+   35 v_global: INTEGER IDENTIF v_asignacion v_multiple .
+
+    $default  reduce using rule 35 (v_global)
+
+
+State 31
+
+   12 parametros: INTEGER . IDENTIF r_parametros
+
+    IDENTIF  shift, and go to state 52
+
+
+State 32
+
+    8 funciones: IDENTIF '(' parametros . ')' '{' $@1 cuerpo_funcion '}' funciones
+
+    ')'  shift, and go to state 53
+
+
+State 33
+
+   16 iniciar: MAIN '(' . ')' '{' r_sentencias '}'
+
+    ')'  shift, and go to state 54
+
+
+State 34
+
+   76 termino: '+' operando .
+
+    $default  reduce using rule 76 (termino)
+
+
+State 35
+
+   77 termino: '-' operando .
+
+    $default  reduce using rule 77 (termino)
+
+
+State 36
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   80 operando: '(' expresion . ')'
+
+    OR             shift, and go to state 38
+    AND            shift, and go to state 39
+    COMPARISON     shift, and go to state 40
+    DIFFERENCE     shift, and go to state 41
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+    ')'            shift, and go to state 59
+
+
+State 37
+
+   49 expresion: termino .
+
+    $default  reduce using rule 49 (expresion)
+
+
+State 38
+
+   61 expresion: expresion OR . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 60
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 39
+
+   60 expresion: expresion AND . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 61
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 40
+
+   58 expresion: expresion COMPARISON . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 62
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 41
+
+   59 expresion: expresion DIFFERENCE . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 63
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 42
+
+   56 expresion: expresion LESS_EQUAL . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 64
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 43
+
+   57 expresion: expresion GREATER_EQUAL . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 65
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 44
+
+   55 expresion: expresion '>' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 66
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 45
+
+   54 expresion: expresion '<' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 67
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 46
+
+   50 expresion: expresion '+' . expresion
+   63 expresion_aritm: expresion '+' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 68
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 47
+
+   51 expresion: expresion '-' . expresion
+   64 expresion_aritm: expresion '-' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 69
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 48
+
+   52 expresion: expresion '*' . expresion
+   65 expresion_aritm: expresion '*' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 70
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 49
+
+   53 expresion: expresion '/' . expresion
+   66 expresion_aritm: expresion '/' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 71
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 50
+
+   38 v_asignacion: '[' expresion_aritm ']' .
+
+    $default  reduce using rule 38 (v_asignacion)
+
+
+State 51
+
+   40 v_multiple: ',' IDENTIF . v_asignacion v_multiple
+
+    '='  shift, and go to state 11
+    '['  shift, and go to state 12
+
+    $default  reduce using rule 36 (v_asignacion)
+
+    v_asignacion  go to state 72
+
+
+State 52
+
+   12 parametros: INTEGER IDENTIF . r_parametros
+
+    ','  shift, and go to state 73
+
+    $default  reduce using rule 15 (r_parametros)
+
+    r_parametros  go to state 74
+
+
+State 53
+
+    8 funciones: IDENTIF '(' parametros ')' . '{' $@1 cuerpo_funcion '}' funciones
+
+    '{'  shift, and go to state 75
+
+
+State 54
+
+   16 iniciar: MAIN '(' ')' . '{' r_sentencias '}'
+
+    '{'  shift, and go to state 76
+
+
+State 55
+
+   50 expresion: expresion '+' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 77
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 56
+
+   51 expresion: expresion '-' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 78
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 57
+
+   52 expresion: expresion '*' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 79
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 58
+
+   53 expresion: expresion '/' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 80
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 59
+
+   80 operando: '(' expresion ')' .
+
+    $default  reduce using rule 80 (operando)
+
+
+State 60
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   61          | expresion OR expresion .
+
+    AND            shift, and go to state 39
+    COMPARISON     shift, and go to state 40
+    DIFFERENCE     shift, and go to state 41
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+
+    $default  reduce using rule 61 (expresion)
+
+
+State 61
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   60          | expresion AND expresion .
+   61          | expresion . OR expresion
+
+    COMPARISON     shift, and go to state 40
+    DIFFERENCE     shift, and go to state 41
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+
+    $default  reduce using rule 60 (expresion)
+
+
+State 62
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   58          | expresion COMPARISON expresion .
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+
+    $default  reduce using rule 58 (expresion)
+
+
+State 63
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   59          | expresion DIFFERENCE expresion .
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+
+    $default  reduce using rule 59 (expresion)
+
+
+State 64
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   56          | expresion LESS_EQUAL expresion .
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    '+'  shift, and go to state 55
+    '-'  shift, and go to state 56
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+
+    $default  reduce using rule 56 (expresion)
+
+
+State 65
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   57          | expresion GREATER_EQUAL expresion .
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    '+'  shift, and go to state 55
+    '-'  shift, and go to state 56
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+
+    $default  reduce using rule 57 (expresion)
+
+
+State 66
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   55          | expresion '>' expresion .
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    '+'  shift, and go to state 55
+    '-'  shift, and go to state 56
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+
+    $default  reduce using rule 55 (expresion)
+
+
+State 67
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   54          | expresion '<' expresion .
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    '+'  shift, and go to state 55
+    '-'  shift, and go to state 56
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+
+    $default  reduce using rule 54 (expresion)
+
+
+State 68
+
+   50 expresion: expresion . '+' expresion
+   50          | expresion '+' expresion .
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   63 expresion_aritm: expresion '+' expresion .
+
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+
+    ';'       reduce using rule 63 (expresion_aritm)
+    ')'       reduce using rule 63 (expresion_aritm)
+    ']'       reduce using rule 63 (expresion_aritm)
+    $default  reduce using rule 50 (expresion)
+
+
+State 69
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   51          | expresion '-' expresion .
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   64 expresion_aritm: expresion '-' expresion .
+
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+
+    ';'       reduce using rule 64 (expresion_aritm)
+    ')'       reduce using rule 64 (expresion_aritm)
+    ']'       reduce using rule 64 (expresion_aritm)
+    $default  reduce using rule 51 (expresion)
+
+
+State 70
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   52          | expresion '*' expresion .
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   65 expresion_aritm: expresion '*' expresion .
+
+    ';'       reduce using rule 65 (expresion_aritm)
+    ')'       reduce using rule 65 (expresion_aritm)
+    ']'       reduce using rule 65 (expresion_aritm)
+    $default  reduce using rule 52 (expresion)
+
+
+State 71
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   53          | expresion '/' expresion .
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   66 expresion_aritm: expresion '/' expresion .
+
+    ';'       reduce using rule 66 (expresion_aritm)
+    ')'       reduce using rule 66 (expresion_aritm)
+    ']'       reduce using rule 66 (expresion_aritm)
+    $default  reduce using rule 53 (expresion)
+
+
+State 72
+
+   40 v_multiple: ',' IDENTIF v_asignacion . v_multiple
+
+    ','  shift, and go to state 29
+
+    $default  reduce using rule 39 (v_multiple)
+
+    v_multiple  go to state 81
+
+
+State 73
+
+   14 r_parametros: ',' . parametros
+
+    INTEGER  shift, and go to state 31
+
+    $default  reduce using rule 13 (parametros)
+
+    parametros  go to state 82
+
+
+State 74
+
+   12 parametros: INTEGER IDENTIF r_parametros .
+
+    $default  reduce using rule 12 (parametros)
+
+
+State 75
+
+    8 funciones: IDENTIF '(' parametros ')' '{' . $@1 cuerpo_funcion '}' funciones
+
+    $default  reduce using rule 7 ($@1)
+
+    $@1  go to state 83
+
+
+State 76
+
+   16 iniciar: MAIN '(' ')' '{' . r_sentencias '}'
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 91
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 77
+
+   50 expresion: expresion . '+' expresion
+   50          | expresion '+' expresion .
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+
+    $default  reduce using rule 50 (expresion)
+
+
+State 78
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   51          | expresion '-' expresion .
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+
+    $default  reduce using rule 51 (expresion)
+
+
+State 79
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   52          | expresion '*' expresion .
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    $default  reduce using rule 52 (expresion)
+
+
+State 80
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   53          | expresion '/' expresion .
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    $default  reduce using rule 53 (expresion)
+
+
+State 81
+
+   40 v_multiple: ',' IDENTIF v_asignacion v_multiple .
+
+    $default  reduce using rule 40 (v_multiple)
+
+
+State 82
+
+   14 r_parametros: ',' parametros .
+
+    $default  reduce using rule 14 (r_parametros)
+
+
+State 83
+
+    8 funciones: IDENTIF '(' parametros ')' '{' $@1 . cuerpo_funcion '}' funciones
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 96
+    IF       shift, and go to state 97
+    FOR      shift, and go to state 98
+    RETURN   shift, and go to state 99
+
+    $default  reduce using rule 11 (cuerpo_funcion)
+
+    cuerpo_funcion   go to state 100
+    sentencia        go to state 101
+    r_sentencia      go to state 102
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 84
+
+   47 asignacion: IDENTIF . '=' expresion
+   48           | IDENTIF . '[' expresion_aritm ']' '=' expresion
+
+    '='  shift, and go to state 103
+    '['  shift, and go to state 104
+
+
+State 85
+
+   34 imprimir_cadena: PUTS . '(' STRING ')'
+
+    '('  shift, and go to state 105
+
+
+State 86
+
+   41 impresion: PRINTF . '(' argumento
+
+    '('  shift, and go to state 106
+
+
+State 87
+
+   23 r_sentencias: WHILE . '(' expresion_cond ')' '{' r_sentencias '}' r_sentencias
+
+    '('  shift, and go to state 107
+
+
+State 88
+
+   24 r_sentencias: IF . '(' expresion ')' '{' r_sentencia r_sentencias '}' r_if
+
+    '('  shift, and go to state 108
+
+
+State 89
+
+   25 r_sentencias: FOR . '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}' r_sentencias
+
+    '('  shift, and go to state 109
+
+
+State 90
+
+   22 r_sentencias: sentencia . ';' r_sentencias
+
+    ';'  shift, and go to state 110
+
+
+State 91
+
+   16 iniciar: MAIN '(' ')' '{' r_sentencias . '}'
+
+    '}'  shift, and go to state 111
+
+
+State 92
+
+   20 sentencia: imprimir_cadena .
+
+    $default  reduce using rule 20 (sentencia)
+
+
+State 93
+
+   19 sentencia: v_global .
+
+    $default  reduce using rule 19 (sentencia)
+
+
+State 94
+
+   18 sentencia: impresion .
+
+    $default  reduce using rule 18 (sentencia)
+
+
+State 95
+
+   17 sentencia: asignacion .
+
+    $default  reduce using rule 17 (sentencia)
+
+
+State 96
+
+   27 r_sentencia: WHILE . '(' expresion_cond ')' '{' r_sentencias '}'
+
+    '('  shift, and go to state 112
+
+
+State 97
+
+   28 r_sentencia: IF . '(' expresion ')' '{' r_sentencia r_sentencias '}' r_else
+
+    '('  shift, and go to state 113
+
+
+State 98
+
+   29 r_sentencia: FOR . '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}'
+
+    '('  shift, and go to state 114
+
+
+State 99
+
+   10 cuerpo_funcion: RETURN . expresion ';' cuerpo_funcion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 115
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 100
+
+    8 funciones: IDENTIF '(' parametros ')' '{' $@1 cuerpo_funcion . '}' funciones
+
+    '}'  shift, and go to state 116
+
+
+State 101
+
+   26 r_sentencia: sentencia . ';'
+
+    ';'  shift, and go to state 117
+
+
+State 102
+
+    9 cuerpo_funcion: r_sentencia . cuerpo_funcion
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 96
+    IF       shift, and go to state 97
+    FOR      shift, and go to state 98
+    RETURN   shift, and go to state 99
+
+    $default  reduce using rule 11 (cuerpo_funcion)
+
+    cuerpo_funcion   go to state 118
+    sentencia        go to state 101
+    r_sentencia      go to state 102
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 103
+
+   47 asignacion: IDENTIF '=' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 119
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 104
+
+   48 asignacion: IDENTIF '[' . expresion_aritm ']' '=' expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion        go to state 25
+    expresion_aritm  go to state 120
+    termino          go to state 27
+    operando         go to state 28
+
+
+State 105
+
+   34 imprimir_cadena: PUTS '(' . STRING ')'
+
+    STRING  shift, and go to state 121
+
+
+State 106
+
+   41 impresion: PRINTF '(' . argumento
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 122
+    STRING   shift, and go to state 123
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    argumento  go to state 124
+    expresion  go to state 125
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 107
+
+   23 r_sentencias: WHILE '(' . expresion_cond ')' '{' r_sentencias '}' r_sentencias
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion       go to state 126
+    expresion_cond  go to state 127
+    termino         go to state 37
+    operando        go to state 28
+
+
+State 108
+
+   24 r_sentencias: IF '(' . expresion ')' '{' r_sentencia r_sentencias '}' r_if
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 128
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 109
+
+   25 r_sentencias: FOR '(' . IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}' r_sentencias
+
+    IDENTIF  shift, and go to state 129
+
+
+State 110
+
+   22 r_sentencias: sentencia ';' . r_sentencias
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 130
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 111
+
+   16 iniciar: MAIN '(' ')' '{' r_sentencias '}' .
+
+    $default  reduce using rule 16 (iniciar)
+
+
+State 112
+
+   27 r_sentencia: WHILE '(' . expresion_cond ')' '{' r_sentencias '}'
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion       go to state 126
+    expresion_cond  go to state 131
+    termino         go to state 37
+    operando        go to state 28
+
+
+State 113
+
+   28 r_sentencia: IF '(' . expresion ')' '{' r_sentencia r_sentencias '}' r_else
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 132
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 114
+
+   29 r_sentencia: FOR '(' . IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}'
+
+    IDENTIF  shift, and go to state 133
+
+
+State 115
+
+   10 cuerpo_funcion: RETURN expresion . ';' cuerpo_funcion
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    OR             shift, and go to state 38
+    AND            shift, and go to state 39
+    COMPARISON     shift, and go to state 40
+    DIFFERENCE     shift, and go to state 41
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+    ';'            shift, and go to state 134
+
+
+State 116
+
+    8 funciones: IDENTIF '(' parametros ')' '{' $@1 cuerpo_funcion '}' . funciones
+
+    IDENTIF  shift, and go to state 7
+
+    $default  reduce using rule 6 (funciones)
+
+    funciones  go to state 135
+
+
+State 117
+
+   26 r_sentencia: sentencia ';' .
+
+    $default  reduce using rule 26 (r_sentencia)
+
+
+State 118
+
+    9 cuerpo_funcion: r_sentencia cuerpo_funcion .
+
+    $default  reduce using rule 9 (cuerpo_funcion)
+
+
+State 119
+
+   47 asignacion: IDENTIF '=' expresion .
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    OR             shift, and go to state 38
+    AND            shift, and go to state 39
+    COMPARISON     shift, and go to state 40
+    DIFFERENCE     shift, and go to state 41
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+
+    $default  reduce using rule 47 (asignacion)
+
+
+State 120
+
+   48 asignacion: IDENTIF '[' expresion_aritm . ']' '=' expresion
+
+    ']'  shift, and go to state 136
+
+
+State 121
+
+   34 imprimir_cadena: PUTS '(' STRING . ')'
+
+    ')'  shift, and go to state 137
+
+
+State 122
+
+   44 argumento: IDENTIF . '[' expresion_aritm ']' r_impresion
+   78 operando: IDENTIF .
+
+    '['  shift, and go to state 138
+
+    $default  reduce using rule 78 (operando)
+
+
+State 123
+
+   43 argumento: STRING . r_impresion
+
+    ')'  shift, and go to state 139
+    ','  shift, and go to state 140
+
+    r_impresion  go to state 141
+
+
+State 124
+
+   41 impresion: PRINTF '(' argumento .
+
+    $default  reduce using rule 41 (impresion)
+
+
+State 125
+
+   42 argumento: expresion . r_impresion
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    OR             shift, and go to state 38
+    AND            shift, and go to state 39
+    COMPARISON     shift, and go to state 40
+    DIFFERENCE     shift, and go to state 41
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+    ')'            shift, and go to state 139
+    ','            shift, and go to state 140
+
+    r_impresion  go to state 142
+
+
+State 126
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   67 expresion_cond: expresion . '<' expresion
+   68               | expresion . '>' expresion
+   69               | expresion . LESS_EQUAL expresion
+   70               | expresion . GREATER_EQUAL expresion
+   71               | expresion . COMPARISON expresion
+   72               | expresion . DIFFERENCE expresion
+   73               | expresion . AND expresion
+   74               | expresion . OR expresion
+
+    OR             shift, and go to state 143
+    AND            shift, and go to state 144
+    COMPARISON     shift, and go to state 145
+    DIFFERENCE     shift, and go to state 146
+    LESS_EQUAL     shift, and go to state 147
+    GREATER_EQUAL  shift, and go to state 148
+    '>'            shift, and go to state 149
+    '<'            shift, and go to state 150
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+
+
+State 127
+
+   23 r_sentencias: WHILE '(' expresion_cond . ')' '{' r_sentencias '}' r_sentencias
+
+    ')'  shift, and go to state 151
+
+
+State 128
+
+   24 r_sentencias: IF '(' expresion . ')' '{' r_sentencia r_sentencias '}' r_if
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    OR             shift, and go to state 38
+    AND            shift, and go to state 39
+    COMPARISON     shift, and go to state 40
+    DIFFERENCE     shift, and go to state 41
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+    ')'            shift, and go to state 152
+
+
+State 129
+
+   25 r_sentencias: FOR '(' IDENTIF . '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}' r_sentencias
+
+    '='  shift, and go to state 153
+
+
+State 130
+
+   22 r_sentencias: sentencia ';' r_sentencias .
+
+    $default  reduce using rule 22 (r_sentencias)
+
+
+State 131
+
+   27 r_sentencia: WHILE '(' expresion_cond . ')' '{' r_sentencias '}'
+
+    ')'  shift, and go to state 154
+
+
+State 132
+
+   28 r_sentencia: IF '(' expresion . ')' '{' r_sentencia r_sentencias '}' r_else
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    OR             shift, and go to state 38
+    AND            shift, and go to state 39
+    COMPARISON     shift, and go to state 40
+    DIFFERENCE     shift, and go to state 41
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+    ')'            shift, and go to state 155
+
+
+State 133
+
+   29 r_sentencia: FOR '(' IDENTIF . '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}'
+
+    '='  shift, and go to state 156
+
+
+State 134
+
+   10 cuerpo_funcion: RETURN expresion ';' . cuerpo_funcion
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 96
+    IF       shift, and go to state 97
+    FOR      shift, and go to state 98
+    RETURN   shift, and go to state 99
+
+    $default  reduce using rule 11 (cuerpo_funcion)
+
+    cuerpo_funcion   go to state 157
+    sentencia        go to state 101
+    r_sentencia      go to state 102
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 135
+
+    8 funciones: IDENTIF '(' parametros ')' '{' $@1 cuerpo_funcion '}' funciones .
+
+    $default  reduce using rule 8 (funciones)
+
+
+State 136
+
+   48 asignacion: IDENTIF '[' expresion_aritm ']' . '=' expresion
+
+    '='  shift, and go to state 158
+
+
+State 137
+
+   34 imprimir_cadena: PUTS '(' STRING ')' .
+
+    $default  reduce using rule 34 (imprimir_cadena)
+
+
+State 138
+
+   44 argumento: IDENTIF '[' . expresion_aritm ']' r_impresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion        go to state 25
+    expresion_aritm  go to state 159
+    termino          go to state 27
+    operando         go to state 28
+
+
+State 139
+
+   46 r_impresion: ')' .
+
+    $default  reduce using rule 46 (r_impresion)
+
+
+State 140
+
+   45 r_impresion: ',' . argumento
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 122
+    STRING   shift, and go to state 123
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    argumento  go to state 160
+    expresion  go to state 125
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 141
+
+   43 argumento: STRING r_impresion .
+
+    $default  reduce using rule 43 (argumento)
+
+
+State 142
+
+   42 argumento: expresion r_impresion .
+
+    $default  reduce using rule 42 (argumento)
+
+
+State 143
+
+   61 expresion: expresion OR . expresion
+   74 expresion_cond: expresion OR . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 161
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 144
+
+   60 expresion: expresion AND . expresion
+   73 expresion_cond: expresion AND . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 162
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 145
+
+   58 expresion: expresion COMPARISON . expresion
+   71 expresion_cond: expresion COMPARISON . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 163
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 146
+
+   59 expresion: expresion DIFFERENCE . expresion
+   72 expresion_cond: expresion DIFFERENCE . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 164
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 147
+
+   56 expresion: expresion LESS_EQUAL . expresion
+   69 expresion_cond: expresion LESS_EQUAL . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 165
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 148
+
+   57 expresion: expresion GREATER_EQUAL . expresion
+   70 expresion_cond: expresion GREATER_EQUAL . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 166
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 149
+
+   55 expresion: expresion '>' . expresion
+   68 expresion_cond: expresion '>' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 167
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 150
+
+   54 expresion: expresion '<' . expresion
+   67 expresion_cond: expresion '<' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 168
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 151
+
+   23 r_sentencias: WHILE '(' expresion_cond ')' . '{' r_sentencias '}' r_sentencias
+
+    '{'  shift, and go to state 169
+
+
+State 152
+
+   24 r_sentencias: IF '(' expresion ')' . '{' r_sentencia r_sentencias '}' r_if
+
+    '{'  shift, and go to state 170
+
+
+State 153
+
+   25 r_sentencias: FOR '(' IDENTIF '=' . expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}' r_sentencias
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion        go to state 25
+    expresion_aritm  go to state 171
+    termino          go to state 27
+    operando         go to state 28
+
+
+State 154
+
+   27 r_sentencia: WHILE '(' expresion_cond ')' . '{' r_sentencias '}'
+
+    '{'  shift, and go to state 172
+
+
+State 155
+
+   28 r_sentencia: IF '(' expresion ')' . '{' r_sentencia r_sentencias '}' r_else
+
+    '{'  shift, and go to state 173
+
+
+State 156
+
+   29 r_sentencia: FOR '(' IDENTIF '=' . expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}'
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion        go to state 25
+    expresion_aritm  go to state 174
+    termino          go to state 27
+    operando         go to state 28
+
+
+State 157
+
+   10 cuerpo_funcion: RETURN expresion ';' cuerpo_funcion .
+
+    $default  reduce using rule 10 (cuerpo_funcion)
+
+
+State 158
+
+   48 asignacion: IDENTIF '[' expresion_aritm ']' '=' . expresion
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion  go to state 175
+    termino    go to state 37
+    operando   go to state 28
+
+
+State 159
+
+   44 argumento: IDENTIF '[' expresion_aritm . ']' r_impresion
+
+    ']'  shift, and go to state 176
+
+
+State 160
+
+   45 r_impresion: ',' argumento .
+
+    $default  reduce using rule 45 (r_impresion)
+
+
+State 161
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   61          | expresion OR expresion .
+   74 expresion_cond: expresion OR expresion .
+
+    AND            shift, and go to state 39
+    COMPARISON     shift, and go to state 40
+    DIFFERENCE     shift, and go to state 41
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+
+    OR        reduce using rule 61 (expresion)
+    $default  reduce using rule 74 (expresion_cond)
+
+
+State 162
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   60          | expresion AND expresion .
+   61          | expresion . OR expresion
+   73 expresion_cond: expresion AND expresion .
+
+    COMPARISON     shift, and go to state 40
+    DIFFERENCE     shift, and go to state 41
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+
+    ';'       reduce using rule 73 (expresion_cond)
+    ')'       reduce using rule 73 (expresion_cond)
+    $default  reduce using rule 60 (expresion)
+
+
+State 163
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   58          | expresion COMPARISON expresion .
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   71 expresion_cond: expresion COMPARISON expresion .
+
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+
+    ';'       reduce using rule 71 (expresion_cond)
+    ')'       reduce using rule 71 (expresion_cond)
+    $default  reduce using rule 58 (expresion)
+
+
+State 164
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   59          | expresion DIFFERENCE expresion .
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   72 expresion_cond: expresion DIFFERENCE expresion .
+
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+
+    ';'       reduce using rule 72 (expresion_cond)
+    ')'       reduce using rule 72 (expresion_cond)
+    $default  reduce using rule 59 (expresion)
+
+
+State 165
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   56          | expresion LESS_EQUAL expresion .
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   69 expresion_cond: expresion LESS_EQUAL expresion .
+
+    '+'  shift, and go to state 55
+    '-'  shift, and go to state 56
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+
+    ';'       reduce using rule 69 (expresion_cond)
+    ')'       reduce using rule 69 (expresion_cond)
+    $default  reduce using rule 56 (expresion)
+
+
+State 166
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   57          | expresion GREATER_EQUAL expresion .
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   70 expresion_cond: expresion GREATER_EQUAL expresion .
+
+    '+'  shift, and go to state 55
+    '-'  shift, and go to state 56
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+
+    ';'       reduce using rule 70 (expresion_cond)
+    ')'       reduce using rule 70 (expresion_cond)
+    $default  reduce using rule 57 (expresion)
+
+
+State 167
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   55          | expresion '>' expresion .
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   68 expresion_cond: expresion '>' expresion .
+
+    '+'  shift, and go to state 55
+    '-'  shift, and go to state 56
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+
+    ';'       reduce using rule 68 (expresion_cond)
+    ')'       reduce using rule 68 (expresion_cond)
+    $default  reduce using rule 55 (expresion)
+
+
+State 168
+
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   54          | expresion '<' expresion .
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+   67 expresion_cond: expresion '<' expresion .
+
+    '+'  shift, and go to state 55
+    '-'  shift, and go to state 56
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+
+    ';'       reduce using rule 67 (expresion_cond)
+    ')'       reduce using rule 67 (expresion_cond)
+    $default  reduce using rule 54 (expresion)
+
+
+State 169
+
+   23 r_sentencias: WHILE '(' expresion_cond ')' '{' . r_sentencias '}' r_sentencias
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 177
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 170
+
+   24 r_sentencias: IF '(' expresion ')' '{' . r_sentencia r_sentencias '}' r_if
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 96
+    IF       shift, and go to state 97
+    FOR      shift, and go to state 98
+
+    sentencia        go to state 101
+    r_sentencia      go to state 178
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 171
+
+   25 r_sentencias: FOR '(' IDENTIF '=' expresion_aritm . ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}' r_sentencias
+
+    ';'  shift, and go to state 179
+
+
+State 172
+
+   27 r_sentencia: WHILE '(' expresion_cond ')' '{' . r_sentencias '}'
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 180
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 173
+
+   28 r_sentencia: IF '(' expresion ')' '{' . r_sentencia r_sentencias '}' r_else
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 96
+    IF       shift, and go to state 97
+    FOR      shift, and go to state 98
+
+    sentencia        go to state 101
+    r_sentencia      go to state 181
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 174
+
+   29 r_sentencia: FOR '(' IDENTIF '=' expresion_aritm . ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}'
+
+    ';'  shift, and go to state 182
+
+
+State 175
+
+   48 asignacion: IDENTIF '[' expresion_aritm ']' '=' expresion .
+   50 expresion: expresion . '+' expresion
+   51          | expresion . '-' expresion
+   52          | expresion . '*' expresion
+   53          | expresion . '/' expresion
+   54          | expresion . '<' expresion
+   55          | expresion . '>' expresion
+   56          | expresion . LESS_EQUAL expresion
+   57          | expresion . GREATER_EQUAL expresion
+   58          | expresion . COMPARISON expresion
+   59          | expresion . DIFFERENCE expresion
+   60          | expresion . AND expresion
+   61          | expresion . OR expresion
+
+    OR             shift, and go to state 38
+    AND            shift, and go to state 39
+    COMPARISON     shift, and go to state 40
+    DIFFERENCE     shift, and go to state 41
+    LESS_EQUAL     shift, and go to state 42
+    GREATER_EQUAL  shift, and go to state 43
+    '>'            shift, and go to state 44
+    '<'            shift, and go to state 45
+    '+'            shift, and go to state 55
+    '-'            shift, and go to state 56
+    '*'            shift, and go to state 57
+    '/'            shift, and go to state 58
+
+    $default  reduce using rule 48 (asignacion)
+
+
+State 176
+
+   44 argumento: IDENTIF '[' expresion_aritm ']' . r_impresion
+
+    ')'  shift, and go to state 139
+    ','  shift, and go to state 140
+
+    r_impresion  go to state 183
+
+
+State 177
+
+   23 r_sentencias: WHILE '(' expresion_cond ')' '{' r_sentencias . '}' r_sentencias
+
+    '}'  shift, and go to state 184
+
+
+State 178
+
+   24 r_sentencias: IF '(' expresion ')' '{' r_sentencia . r_sentencias '}' r_if
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 185
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 179
+
+   25 r_sentencias: FOR '(' IDENTIF '=' expresion_aritm ';' . expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}' r_sentencias
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion       go to state 126
+    expresion_cond  go to state 186
+    termino         go to state 37
+    operando        go to state 28
+
+
+State 180
+
+   27 r_sentencia: WHILE '(' expresion_cond ')' '{' r_sentencias . '}'
+
+    '}'  shift, and go to state 187
+
+
+State 181
+
+   28 r_sentencia: IF '(' expresion ')' '{' r_sentencia . r_sentencias '}' r_else
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 188
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 182
+
+   29 r_sentencia: FOR '(' IDENTIF '=' expresion_aritm ';' . expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}'
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion       go to state 126
+    expresion_cond  go to state 189
+    termino         go to state 37
+    operando        go to state 28
+
+
+State 183
+
+   44 argumento: IDENTIF '[' expresion_aritm ']' r_impresion .
+
+    $default  reduce using rule 44 (argumento)
+
+
+State 184
+
+   23 r_sentencias: WHILE '(' expresion_cond ')' '{' r_sentencias '}' . r_sentencias
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 190
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 185
+
+   24 r_sentencias: IF '(' expresion ')' '{' r_sentencia r_sentencias . '}' r_if
+
+    '}'  shift, and go to state 191
+
+
+State 186
+
+   25 r_sentencias: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond . ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}' r_sentencias
+
+    ';'  shift, and go to state 192
+
+
+State 187
+
+   27 r_sentencia: WHILE '(' expresion_cond ')' '{' r_sentencias '}' .
+
+    $default  reduce using rule 27 (r_sentencia)
+
+
+State 188
+
+   28 r_sentencia: IF '(' expresion ')' '{' r_sentencia r_sentencias . '}' r_else
+
+    '}'  shift, and go to state 193
+
+
+State 189
+
+   29 r_sentencia: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond . ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}'
+
+    ';'  shift, and go to state 194
+
+
+State 190
+
+   23 r_sentencias: WHILE '(' expresion_cond ')' '{' r_sentencias '}' r_sentencias .
+
+    $default  reduce using rule 23 (r_sentencias)
+
+
+State 191
+
+   24 r_sentencias: IF '(' expresion ')' '{' r_sentencia r_sentencias '}' . r_if
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    ELSE     shift, and go to state 195
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 196
+    r_if             go to state 197
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 192
+
+   25 r_sentencias: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' . IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}' r_sentencias
+
+    IDENTIF  shift, and go to state 198
+
+
+State 193
+
+   28 r_sentencia: IF '(' expresion ')' '{' r_sentencia r_sentencias '}' . r_else
+
+    ELSE  shift, and go to state 199
+
+    $default  reduce using rule 32 (r_else)
+
+    r_else  go to state 200
+
+
+State 194
+
+   29 r_sentencia: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' . IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}'
+
+    IDENTIF  shift, and go to state 201
+
+
+State 195
+
+   31 r_if: ELSE . '{' r_sentencia r_sentencias '}' r_sentencias
+
+    '{'  shift, and go to state 202
+
+
+State 196
+
+   30 r_if: r_sentencias .
+
+    $default  reduce using rule 30 (r_if)
+
+
+State 197
+
+   24 r_sentencias: IF '(' expresion ')' '{' r_sentencia r_sentencias '}' r_if .
+
+    $default  reduce using rule 24 (r_sentencias)
+
+
+State 198
+
+   25 r_sentencias: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF . '=' expresion_aritm ')' '{' r_sentencias '}' r_sentencias
+
+    '='  shift, and go to state 203
+
+
+State 199
+
+   33 r_else: ELSE . '{' r_sentencia r_sentencias '}'
+
+    '{'  shift, and go to state 204
+
+
+State 200
+
+   28 r_sentencia: IF '(' expresion ')' '{' r_sentencia r_sentencias '}' r_else .
+
+    $default  reduce using rule 28 (r_sentencia)
+
+
+State 201
+
+   29 r_sentencia: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF . '=' expresion_aritm ')' '{' r_sentencias '}'
+
+    '='  shift, and go to state 205
+
+
+State 202
+
+   31 r_if: ELSE '{' . r_sentencia r_sentencias '}' r_sentencias
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 96
+    IF       shift, and go to state 97
+    FOR      shift, and go to state 98
+
+    sentencia        go to state 101
+    r_sentencia      go to state 206
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 203
+
+   25 r_sentencias: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' . expresion_aritm ')' '{' r_sentencias '}' r_sentencias
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion        go to state 25
+    expresion_aritm  go to state 207
+    termino          go to state 27
+    operando         go to state 28
+
+
+State 204
+
+   33 r_else: ELSE '{' . r_sentencia r_sentencias '}'
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 96
+    IF       shift, and go to state 97
+    FOR      shift, and go to state 98
+
+    sentencia        go to state 101
+    r_sentencia      go to state 208
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 205
+
+   29 r_sentencia: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' . expresion_aritm ')' '{' r_sentencias '}'
+
+    NUMERO   shift, and go to state 20
+    IDENTIF  shift, and go to state 21
+    '+'      shift, and go to state 22
+    '-'      shift, and go to state 23
+    '('      shift, and go to state 24
+
+    expresion        go to state 25
+    expresion_aritm  go to state 209
+    termino          go to state 27
+    operando         go to state 28
+
+
+State 206
+
+   31 r_if: ELSE '{' r_sentencia . r_sentencias '}' r_sentencias
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 210
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 207
+
+   25 r_sentencias: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm . ')' '{' r_sentencias '}' r_sentencias
+
+    ')'  shift, and go to state 211
+
+
+State 208
+
+   33 r_else: ELSE '{' r_sentencia . r_sentencias '}'
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 212
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 209
+
+   29 r_sentencia: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm . ')' '{' r_sentencias '}'
+
+    ')'  shift, and go to state 213
+
+
+State 210
+
+   31 r_if: ELSE '{' r_sentencia r_sentencias . '}' r_sentencias
+
+    '}'  shift, and go to state 214
+
+
+State 211
+
+   25 r_sentencias: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' . '{' r_sentencias '}' r_sentencias
+
+    '{'  shift, and go to state 215
+
+
+State 212
+
+   33 r_else: ELSE '{' r_sentencia r_sentencias . '}'
+
+    '}'  shift, and go to state 216
+
+
+State 213
+
+   29 r_sentencia: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' . '{' r_sentencias '}'
+
+    '{'  shift, and go to state 217
+
+
+State 214
+
+   31 r_if: ELSE '{' r_sentencia r_sentencias '}' . r_sentencias
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 218
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 215
+
+   25 r_sentencias: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' . r_sentencias '}' r_sentencias
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 219
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 216
+
+   33 r_else: ELSE '{' r_sentencia r_sentencias '}' .
+
+    $default  reduce using rule 33 (r_else)
+
+
+State 217
+
+   29 r_sentencia: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' . r_sentencias '}'
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 220
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 218
+
+   31 r_if: ELSE '{' r_sentencia r_sentencias '}' r_sentencias .
+
+    $default  reduce using rule 31 (r_if)
+
+
+State 219
+
+   25 r_sentencias: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias . '}' r_sentencias
+
+    '}'  shift, and go to state 221
+
+
+State 220
+
+   29 r_sentencia: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias . '}'
+
+    '}'  shift, and go to state 222
+
+
+State 221
+
+   25 r_sentencias: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}' . r_sentencias
+
+    IDENTIF  shift, and go to state 84
+    INTEGER  shift, and go to state 1
+    PUTS     shift, and go to state 85
+    PRINTF   shift, and go to state 86
+    WHILE    shift, and go to state 87
+    IF       shift, and go to state 88
+    FOR      shift, and go to state 89
+
+    $default  reduce using rule 21 (r_sentencias)
+
+    sentencia        go to state 90
+    r_sentencias     go to state 223
+    imprimir_cadena  go to state 92
+    v_global         go to state 93
+    impresion        go to state 94
+    asignacion       go to state 95
+
+
+State 222
+
+   29 r_sentencia: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}' .
+
+    $default  reduce using rule 29 (r_sentencia)
+
+
+State 223
+
+   25 r_sentencias: FOR '(' IDENTIF '=' expresion_aritm ';' expresion_cond ';' IDENTIF '=' expresion_aritm ')' '{' r_sentencias '}' r_sentencias .
+
+    $default  reduce using rule 25 (r_sentencias)
